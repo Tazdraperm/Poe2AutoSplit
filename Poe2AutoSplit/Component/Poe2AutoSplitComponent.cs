@@ -12,7 +12,7 @@ namespace Poe2AutoSplit.Component
 {
     public class Poe2AutoSplitComponent : LogicComponent
     {
-        public const string Name = "Path of Exile 2 AutoSplitter++";
+        public const string Name = "Path of Exile 2 AutoSplitter";
         public override string ComponentName => Name;
 
         private readonly Settings _settings;
