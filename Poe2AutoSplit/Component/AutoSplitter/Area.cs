@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using LiveSplit.Options;
 
 namespace Poe2AutoSplit.Component.AutoSplitter
 {
@@ -8,72 +10,13 @@ namespace Poe2AutoSplit.Component.AutoSplitter
         public string Id { get; }
 
         private static readonly Dictionary<string, Area> AreaById = new Dictionary<string, Area>();
-        /*{
-            ["G1_town"] = "Clearfell Encampment",
-            ["G1_2"] = "Clearfell",
-            ["G1_3"] = "Mud Burrow",
-            ["G1_4"] = "Grelwood",
-            ["G1_5"] = "Red Vale",
-            ["G1_6"] = "Grim Tangle",
-            ["G1_7"] = "Cemetery of the Eternals",
-            ["G1_8"] = "Mausoleum of the Praetor",
-            ["G1_9"] = "Tomb of the Consort",
-            ["G1_11"] = "Hunting Grounds",
-            ["G1_12"] = "Freythorn",
-            ["G1_13_1"] = "Ogham Farmlands",
-            ["G1_13_2"] = "Ogham Village",
-            ["G1_14"] = "Manor Ramparts",
-            ["G1_15"] = "Ogham Manor",
-
-            ["G2_1"] = "Vastiri Outskirts",
-            ["G2_town"] = "Arduna Caravan",
-            ["G2_10_1"] = "Mawdun Quarry",
-            ["G2_10_2"] = "Mawdun Mine",
-            ["G2_2"] = "Traitor’s Passage",
-            ["G2_3"] = "Halani Gates",
-            ["G2_4_1"] = "Keth",
-            ["G2_4_2"] = "Lost City",
-            ["G2_4_3"] = "Buried Shrines",
-            ["G2_5_1"] = "Mastodon Badlands",
-            ["G2_5_2"] = "Bone Pits",
-            ["G2_6"] = "Valley of the Titans",
-            ["G2_7"] = "Titan Grotto",
-            ["G2_8"] = "Deshar",
-            ["G2_9_1"] = "Path of Mourning",
-            ["G2_9_2"] = "Spires of Deshar",
-            ["G2_12_1"] = "Dreadnought",
-            ["G2_12_2"] = "Dreadnought Vanguard",
-
-            ["G3_1"] = "Sandswept Marsh",
-            ["G3_town"] = "Ziggurat Encampment",
-            ["G3_3"] = "Jungle Ruins",
-            ["G3_4"] = "Venom Crypts",
-            ["G3_2_1"] = "Infested Barrens",
-            ["G3_7"] = "Azak Bog",
-            ["G3_5"] = "Chimeral Wetlands",
-            ["G3_6_1"] = "Jiquani's Machinarium",
-            ["G3_6_2"] = "Jiquani's Sanctum",
-            ["G3_2_2"] = "Matlan Waterways",
-            ["G3_8"] = "Drowned City",
-            ["G3_9"] = "Molten Vault",
-            ["G3_11"] = "Apex of Filth",
-            ["G3_12"] = "Temple of Kopec",
-            ["G3_14"] = "Utzaal",
-            ["G3_16"] = "Aggorat",
-            ["G3_17"] = "Black Chambers"
-        };*/
-
         private static readonly Dictionary<string, Area> AreaByName = new Dictionary<string, Area>();
 
         private static readonly Dictionary<Area, Area> RequiredArea = new Dictionary<Area, Area>();
+        private static readonly Dictionary<Area, GameEvent> RequiredEvent = new Dictionary<Area, GameEvent>();
 
         static Area()
         {
-            /*foreach (var pair in AreaNameById)
-            {
-                IdByAreaName[pair.Value] = pair.Key;
-            }*/
-
             AddArea("G1_town", "Clearfell Encampment");
             AddArea("G1_2", "Clearfell");
             AddArea("G1_3", "Mud Burrow");
@@ -86,7 +29,7 @@ namespace Poe2AutoSplit.Component.AutoSplitter
             AddArea("G1_11", "Hunting Grounds");
             AddArea("G1_12", "Freythorn");
             AddArea("G1_13_1", "Ogham Farmlands");
-            AddArea("G1_13_2", "Ogham Village");
+            AddArea("G1_13_2", "Ogham Village", requiredEvent: new GameEvent("King in the Mists"));
             AddArea("G1_14", "Manor Ramparts");
             AddArea("G1_15", "Ogham Manor");
 
@@ -126,6 +69,9 @@ namespace Poe2AutoSplit.Component.AutoSplitter
             AddArea("G3_14", "Utzaal");
             AddArea("G3_16", "Aggorat");
             AddArea("G3_17", "Black Chambers");
+
+            GameEvent.TryParseFromName("King in the Mists", out var ev);
+            Log.Error(ev.Name);
         }
 
         public Area(string name, string id)
@@ -134,15 +80,20 @@ namespace Poe2AutoSplit.Component.AutoSplitter
             Id = id;
         }
 
-        private static Area AddArea(string id, string name, Area requirement=null)
+        private static Area AddArea(string id, string name, Area requiredArea=null, GameEvent requiredEvent=null)
         {
             var area = new Area(name, id);
             AreaById[id] = area;
             AreaByName[name] = area;
 
-            if (requirement != null)
+            if (requiredArea != null)
             {
-                RequiredArea[area] = requirement;
+                RequiredArea[area] = requiredArea;
+            }
+
+            if (requiredEvent != null)
+            {
+                RequiredEvent[area] = requiredEvent;
             }
 
             return area;
@@ -172,9 +123,10 @@ namespace Poe2AutoSplit.Component.AutoSplitter
             return false;
         }
 
-        public static bool CanSplit(Area area, HashSet<Area> encounteredAreas)
+        public static bool CanSplit(Area area, HashSet<Area> encounteredAreas, HashSet<GameEvent> encounteredEvents)
         {
-            return !RequiredArea.TryGetValue(area, out var requirement) || encounteredAreas.Contains(requirement);
+            return (!RequiredArea.TryGetValue(area, out var requiredArea) || encounteredAreas.Contains(requiredArea)) &&
+                   (!RequiredEvent.TryGetValue(area, out var requiredEvent) || encounteredEvents.Contains(requiredEvent));
         }
 
         public override bool Equals(object obj)

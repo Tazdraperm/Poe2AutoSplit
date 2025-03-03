@@ -38,7 +38,7 @@ namespace Poe2AutoSplit.Component.AutoSplitter
             if (_encounteredAreas.Contains(area))
                 return;
 
-            if (!Area.CanSplit(area, _encounteredAreas))
+            if (!Area.CanSplit(area, _encounteredAreas, _encounteredEvents))
                 return;
 
             Log.Info("Perform split");
