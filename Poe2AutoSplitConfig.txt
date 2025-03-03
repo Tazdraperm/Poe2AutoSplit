@@ -10,10 +10,10 @@ Tomb of the Consort
 Mausoleum of the Praetor
 # Lachlann
 Hunting Grounds
-Ogham Farmlands
+# Ogham Farmlands
 # Freythorn
 King in the Mists
-Ogham Village
+# Ogham Village
 Manor Ramparts
 Ogham Manor
 -----A2-----
