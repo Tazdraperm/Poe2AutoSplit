@@ -49,12 +49,14 @@ namespace Poe2AutoSplit.Component.UI
         private const string LogPathKey = "LogPath";
         private const string ConfigPathKey = "ConfigPath";
 
-        private List<string> _splitNames = new List<string>();
+        private readonly List<string> _splitNames = new List<string>();
 
         public Settings(LiveSplitState state)
         {
             InitializeComponent();
+
             _state = state;
+            SetDefaultSettings();
         }
 
         public XmlNode GetSettings(XmlDocument document)
