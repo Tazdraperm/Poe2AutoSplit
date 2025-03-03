@@ -1,5 +1,5 @@
 # Poe2AutoSplit
-This is a LiveSplit component that enables auto splitting for Path of Exile 2. Based on [this code](https://pages.github.com](https://github.com/brandondong/POE-LiveSplit-Component/).
+This is a LiveSplit component that enables auto splitting for Path of Exile 2. Based on [this code](https://github.com/brandondong/POE-LiveSplit-Component/).
 
 ## Setting up
 1. Download the latest [release](https://github.com/Tazdraperm/Poe2AutoSplit/releases/).
