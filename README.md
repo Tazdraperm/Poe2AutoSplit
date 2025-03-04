@@ -13,9 +13,19 @@ This is a LiveSplit component that enables auto splitting for Path of Exile 2. I
 It is possible to edit the "**Poe2AutoSplitConfig.txt**" file or create a new one from scratch. The file has a very simple format:
 * Each line represents an area name or a boss name
 * Entering that area or killing that boss will result in an automatic split
- 
-All Act 1-3 areas and 3 bosses (**Lachlann**, **King in the Mists** and **Doryani**) are currently supported. For the correct area\boss names please check the "**Poe2AutoSplitConfig.txt**" file.<br/>
+
+For the correct area\boss names please check the "**Poe2AutoSplitConfig.txt**" file.<br/>
 When you are done editing the config file, click the "**Reload Config**" button to apply your changes. You can also click the "**Generate Splits**" button to automatically generate splits from the config file content.
+
+## Splitting on boss kills
+It is possible to add auto split upon killing specific bosses. Currently supported bosses are:
+* Lachlann
+* King in the Mists
+* Count Geonor
+* Jamanra
+* Doryani
+
+Please note that split occurs upon encountering specific voice line related to the boss death. Usuaully it happens right away, but in case of Count Geonor there's ~5 seconds delay between boss death and such a voice line.
 
 ## Limitations
 Cruel difficulty is not supported.
