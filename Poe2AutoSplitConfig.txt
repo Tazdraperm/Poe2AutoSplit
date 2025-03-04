@@ -1,4 +1,9 @@
+------------
+
+Anything that is not an area name or a boss name will be ignored by the Splitter
+
 -----A1-----
+
 Clearfell Encampment
 Clearfell
 # Mud Burrow
@@ -16,7 +21,9 @@ King in the Mists
 Ogham Village
 Manor Ramparts
 Ogham Manor
+Count Geonor
 -----A2-----
+
 Vastiri Outskirts
 Arduna Caravan
 Mawdun Quarry
@@ -35,7 +42,10 @@ Path of Mourning
 Spires of Deshar
 Dreadnought
 Dreadnought Vanguard
+Jamanra
+
 -----A3-----
+
 Sandswept Marsh
 Ziggurat Encampment
 Jungle Ruins
@@ -47,7 +57,7 @@ Jiquani's Machinarium
 Jiquanis Sanctum
 Matlan Waterways
 Drowned City
-Molten Vault
+# Molten Vault
 Apex of Filth
 Temple of Kopec
 Utzaal
