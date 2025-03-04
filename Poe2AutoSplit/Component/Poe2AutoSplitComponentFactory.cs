@@ -14,7 +14,7 @@ namespace Poe2AutoSplit.Component
         public string UpdateName => ComponentName;
         public ComponentCategory Category => ComponentCategory.Other;
 
-        public Version Version => Version.Parse("0.1.0");
+        public Version Version => Version.Parse("0.2.0");
         public string UpdateURL => "";
         public string XMLURL => UpdateURL + "";
 

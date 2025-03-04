@@ -1,0 +1,217 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text.RegularExpressions;
+using System.Windows.Forms;
+
+namespace Poe2AutoSplit.Component.AutoSplitter.Event
+{
+    public class SplitEvent
+    {
+        private static readonly HashSet<SplitEvent> Events = new HashSet<SplitEvent>();
+        private static readonly Dictionary<string, SplitEvent> EventByName = new Dictionary<string, SplitEvent>();
+        private static readonly Dictionary<string, AreaEvent> AreaEventById = new Dictionary<string, AreaEvent>();
+        private static readonly Dictionary<BossEvent, List<string>> VoiceLinesByBossEvent =
+            new Dictionary<BossEvent, List<string>>();
+
+        // This probably should not be here
+        // But some class have to extract SplitEvent from log line
+        // So let it be here
+        private const string TimestampTemplate = @"^[^ ]+ [^ ]+ \d+";
+        private static readonly Regex GeneratingAreaRegex = new Regex(TimestampTemplate + ".*Generating level (\\d+) area \"(.*)\"");
+
+        static SplitEvent()
+        {
+            AddBossEvent("Lachlann", "Lachlann of Endless Lament: Together... at last...");
+            AddBossEvent("Count Geonor", "The Hooded One: Allow me to clear your mind, if only for a moment.");
+            var kingInTheMists = AddBossEvent("King in the Mists", 
+                new List<string>
+                {
+                    "The King in the Mists: Why do you hate us for wanting to exist?",
+                    "The King in the Mists: So long as you know me, I will always exist...",
+                    "The King in the Mists: This is not the end..."
+                });
+            AddBossEvent("Doryani", "Doryani: Gah! No! Do not fail me... Not now!");
+            AddBossEvent("Jamanra", "Jamanra, the Abomination: You have accomplished... Nothing. Oriana will prevail... And the Faridun will rule the Vastiri.");
+
+            AddAreaEvent("G1_town", "Clearfell Encampment");
+            AddAreaEvent("G1_2", "Clearfell");
+            AddAreaEvent("G1_3", "Mud Burrow");
+            AddAreaEvent("G1_4", "Grelwood");
+            var redVale = AddAreaEvent("G1_5", "Red Vale");
+            AddAreaEvent("G1_6", "Grim Tangle", redVale);
+            AddAreaEvent("G1_7", "Cemetery of the Eternals");
+            AddAreaEvent("G1_8", "Mausoleum of the Praetor");
+            AddAreaEvent("G1_9", "Tomb of the Consort");
+            AddAreaEvent("G1_11", "Hunting Grounds");
+            AddAreaEvent("G1_12", "Freythorn");
+            AddAreaEvent("G1_13_1", "Ogham Farmlands");
+            AddAreaEvent("G1_13_2", "Ogham Village", kingInTheMists);
+            AddAreaEvent("G1_14", "Manor Ramparts");
+            AddAreaEvent("G1_15", "Ogham Manor");
+
+            AddAreaEvent("G2_1", "Vastiri Outskirts");
+            AddAreaEvent("G2_town", "Arduna Caravan");
+            AddAreaEvent("G2_10_1", "Mawdun Quarry");
+            AddAreaEvent("G2_10_2", "Mawdun Mine");
+            AddAreaEvent("G2_2", "Traitor’s Passage");
+            AddAreaEvent("G2_3", "Halani Gates");
+            AddAreaEvent("G2_4_1", "Keth");
+            AddAreaEvent("G2_4_2", "Lost City");
+            AddAreaEvent("G2_4_3", "Buried Shrines");
+            AddAreaEvent("G2_5_1", "Mastodon Badlands");
+            AddAreaEvent("G2_5_2", "Bone Pits");
+            AddAreaEvent("G2_6", "Valley of the Titans");
+            AddAreaEvent("G2_7", "Titan Grotto");
+            AddAreaEvent("G2_8", "Deshar");
+            AddAreaEvent("G2_9_1", "Path of Mourning");
+            AddAreaEvent("G2_9_2", "Spires of Deshar");
+            AddAreaEvent("G2_12_1", "Dreadnought");
+            AddAreaEvent("G2_12_2", "Dreadnought Vanguard");
+
+            AddAreaEvent("G3_1", "Sandswept Marsh");
+            AddAreaEvent("G3_town", "Ziggurat Encampment");
+            AddAreaEvent("G3_3", "Jungle Ruins");
+            AddAreaEvent("G3_4", "Venom Crypts");
+            AddAreaEvent("G3_2_1", "Infested Barrens");
+            AddAreaEvent("G3_7", "Azak Bog");
+            AddAreaEvent("G3_5", "Chimeral Wetlands");
+            AddAreaEvent("G3_6_1", "Jiquani's Machinarium");
+            AddAreaEvent("G3_6_2", "Jiquani's Sanctum");
+            AddAreaEvent("G3_2_2", "Matlan Waterways");
+            AddAreaEvent("G3_8", "Drowned City");
+            AddAreaEvent("G3_9", "Molten Vault");
+            AddAreaEvent("G3_11", "Apex of Filth");
+            AddAreaEvent("G3_12", "Temple of Kopec");
+            AddAreaEvent("G3_14", "Utzaal");
+            AddAreaEvent("G3_16", "Aggorat");
+            AddAreaEvent("G3_17", "Black Chambers");
+        }
+
+        private static AreaEvent AddAreaEvent(string id, string name, params SplitEvent[] requiredEvents)
+        {
+            var areaEvent = new AreaEvent(name, id, requiredEvents);
+            Events.Add(areaEvent);
+            EventByName[name] = areaEvent;
+            AreaEventById[id] = areaEvent;
+            return areaEvent;
+        }
+
+        private static BossEvent AddBossEvent(string name, string voiceLine, params SplitEvent[] requiredEvents)
+        {
+            return AddBossEvent(name, new List<string> { voiceLine }, requiredEvents);
+        }
+
+        private static BossEvent AddBossEvent(string name, List<string> voiceLines, params SplitEvent[] requiredEvents)
+        {
+            var bossEvent = new BossEvent(name, voiceLines, requiredEvents);
+            Events.Add(bossEvent);
+            EventByName[name] = bossEvent;
+            VoiceLinesByBossEvent[bossEvent] = voiceLines;
+            return bossEvent;
+        }
+
+        public static bool TryGetByName(string name, out SplitEvent splitEvent)
+        {
+            if (EventByName.TryGetValue(name, out splitEvent))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        public static bool TryGetByLine(string line, out SplitEvent splitEvent)
+        {
+            var match = GeneratingAreaRegex.Match(line);
+            if (match.Success)
+            {
+                var groups = match.Groups;
+                var areaId = groups[2].Value;
+                if (AreaEventById.TryGetValue(areaId, out var areaEvent))
+                {
+                    splitEvent = areaEvent;
+                    return true;
+                }
+            }
+            else foreach (var pair in VoiceLinesByBossEvent)
+            {
+                var bossEvent = pair.Key;
+                var voiceLines = pair.Value;
+                foreach (var voiceLine in voiceLines)
+                {
+                    if (line.Contains(voiceLine))
+                    {
+                        splitEvent = bossEvent;
+                        return true;
+                    }
+                }
+            }
+
+            splitEvent = null;
+            return false;
+        }
+
+        public static void ResetAll(object sender, EventArgs e)
+        {
+            foreach (var ev in Events)
+            {
+                ev.Reset();
+            }
+        }
+
+        public static void DisableAll()
+        {
+            foreach (var ev in Events)
+            {
+                ev.IsEnabled = false;
+            }
+        }
+
+        public string Name { get; }
+        public bool IsEnabled { get; set; }
+
+        private readonly List<SplitEvent> _requiredEvents = new List<SplitEvent>();
+        private bool _didSplit;
+
+        public SplitEvent(string name, params SplitEvent[] requiredEvents)
+        {
+            Name = name;
+            _requiredEvents.AddRange(requiredEvents);
+        }
+
+        public bool CanSplit()
+        {
+            if (_didSplit)
+                return false;
+
+            foreach (var requiredEvent in _requiredEvents)
+            {
+                if (requiredEvent.IsEnabled && !requiredEvent._didSplit)
+                    return false;
+            }
+
+            return true;
+        }
+
+        public void Split()
+        {
+            _didSplit = true;
+        }
+
+        public void Reset()
+        {
+            _didSplit = false;
+        }
+
+        public override bool Equals(object obj)
+        {
+            var ev = obj as SplitEvent;
+            return ev != null && Name.Equals(ev.Name);
+        }
+
+        public override int GetHashCode()
+        {
+            return Name.GetHashCode();
+        }
+    }
+}

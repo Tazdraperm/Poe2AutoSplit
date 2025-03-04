@@ -74,8 +74,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Component\AutoSplitter\Area.cs" />
-    <Compile Include="Component\AutoSplitter\GameEvent.cs" />
+    <Compile Include="Component\AutoSplitter\AreaEvent.cs" />
+    <Compile Include="Component\AutoSplitter\BossEvent.cs" />
+    <Compile Include="Component\AutoSplitter\Event\SplitEvent.cs" />
     <Compile Include="Component\ClientLog\LogReader.cs" />
     <Compile Include="Component\Poe2AutoSplitComponent.cs" />
     <Compile Include="Component\Poe2AutoSplitComponentFactory.cs" />

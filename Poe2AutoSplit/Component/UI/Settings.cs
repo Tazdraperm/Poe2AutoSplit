@@ -7,6 +7,7 @@ using LiveSplit.Model;
 using LiveSplit.Options;
 using LiveSplit.UI;
 using Poe2AutoSplit.Component.AutoSplitter;
+using Poe2AutoSplit.Component.AutoSplitter.Event;
 
 namespace Poe2AutoSplit.Component.UI
 {
@@ -36,12 +37,9 @@ namespace Poe2AutoSplit.Component.UI
         }
         private string _configPath;
 
-        private readonly LiveSplitState _state;
-
-        public List<Area> SplitAreas = new List<Area>();
-        public List<GameEvent> SplitEvents = new List<GameEvent>();
-
         public Action OnLogPathChanged { get; set; }
+
+        private readonly LiveSplitState _state;
 
         private const string DefaultLogPath = @"C:\Program Files (x86)\Grinding Gear Games\Path of Exile 2\logs\Client.txt";
 
@@ -110,24 +108,17 @@ namespace Poe2AutoSplit.Component.UI
             if (!File.Exists(ConfigPath))
                 return;
 
-            SplitAreas.Clear();
-            SplitEvents.Clear();
+            SplitEvent.DisableAll();
             _splitNames.Clear();
 
             var lines = File.ReadAllLines(ConfigPath);
             foreach (var line in lines)
             {
-                if (Area.TryParseFromName(line, out var area))
+                if (SplitEvent.TryGetByName(line, out var splitEvent))
                 {
-                    SplitAreas.Add(area);
-                    _splitNames.Add(area.Name);
-                    Log.Info($"Add area: {area.Name}");
-                }
-                else if (GameEvent.TryParseFromName(line, out var gameEvent))
-                {
-                    SplitEvents.Add(gameEvent);
-                    _splitNames.Add(gameEvent.Name);
-                    Log.Info($"Add event: {gameEvent.Name}");
+                    splitEvent.IsEnabled = true;
+                    _splitNames.Add(splitEvent.Name);
+                    Log.Info($"Add split event: {splitEvent.Name}");
                 }
             }
         }
