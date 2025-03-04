@@ -28,7 +28,7 @@ namespace Poe2AutoSplit.Component.AutoSplitter
             if (_timer.CurrentState.CurrentPhase != TimerPhase.Running)
                 return;
 
-            if (!splitEvent.CanSplit())
+            if (!splitEvent.IsEnabled || !splitEvent.CanSplit())
                 return;
 
             Log.Info("Split!");
