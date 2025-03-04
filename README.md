@@ -25,7 +25,7 @@ It is possible to add auto split upon killing specific bosses. Currently support
 * Jamanra
 * Doryani
 
-Please note that split occurs upon encountering specific voice line related to the boss death. Usuaully it happens right away, but in case of Count Geonor there's ~5 seconds delay between boss death and such a voice line.
+Please note that split occurs upon encountering specific voice line related to the boss death. Usuaully it happens right away, but in case of Count Geonor there's ~5 seconds delay between boss death and voice line.
 
 ## Limitations
 Cruel difficulty is not supported.
