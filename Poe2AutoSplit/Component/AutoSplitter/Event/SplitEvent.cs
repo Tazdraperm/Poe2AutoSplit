@@ -29,8 +29,8 @@ namespace Poe2AutoSplit.Component.AutoSplitter.Event
             var redVale = AddAreaEvent("G1_5", "Red Vale");
             AddAreaEvent("G1_6", "Grim Tangle", redVale);
             AddAreaEvent("G1_7", "Cemetery of the Eternals");
-            AddAreaEvent("G1_8", "Mausoleum of the Praetor");
             AddAreaEvent("G1_9", "Tomb of the Consort");
+            AddAreaEvent("G1_8", "Mausoleum of the Praetor");
             AddBossEvent("Lachlann", "Lachlann of Endless Lament: Together... at last...");
             AddAreaEvent("G1_11", "Hunting Grounds");
             AddAreaEvent("G1_12", "Freythorn");
