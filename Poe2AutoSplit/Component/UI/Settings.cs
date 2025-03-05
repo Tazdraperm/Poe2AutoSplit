@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Security.Policy;
 using System.Windows.Forms;
 using System.Xml;
 using LiveSplit.Model;
 using LiveSplit.Options;
 using LiveSplit.UI;
 using Poe2AutoSplit.Component.AutoSplitter.Event;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox;
 
 namespace Poe2AutoSplit.Component.UI
 {

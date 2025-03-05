@@ -159,14 +159,6 @@ namespace Poe2AutoSplit.Component.AutoSplitter.Event
             }
         }
 
-        public static void DisableAll()
-        {
-            foreach (var ev in Events)
-            {
-                ev.IsEnabled = false;
-            }
-        }
-
         public string Name { get; }
         public bool IsEnabled { get; set; }
 
