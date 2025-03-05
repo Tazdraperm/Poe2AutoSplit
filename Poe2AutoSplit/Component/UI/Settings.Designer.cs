@@ -33,13 +33,11 @@
             this.logPathLabel = new System.Windows.Forms.Label();
             this.enabledCheckbox = new System.Windows.Forms.CheckBox();
             this.logPathTextbox = new System.Windows.Forms.TextBox();
-            this.configPathTextbox = new System.Windows.Forms.TextBox();
-            this.configPathLabel = new System.Windows.Forms.Label();
             this.generateSplitsButton = new System.Windows.Forms.Button();
             this.browseLogFileButton = new System.Windows.Forms.Button();
-            this.browseConfigFileButton = new System.Windows.Forms.Button();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
-            this.reloadConfigButton = new System.Windows.Forms.Button();
+            this.checkedSplitEventList = new System.Windows.Forms.CheckedListBox();
+            this.selectAllCheckbox = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // contextMenuStrip1
@@ -50,7 +48,7 @@
             // logPathLabel
             // 
             this.logPathLabel.AutoSize = true;
-            this.logPathLabel.Location = new System.Drawing.Point(10, 35);
+            this.logPathLabel.Location = new System.Drawing.Point(10, 293);
             this.logPathLabel.Name = "logPathLabel";
             this.logPathLabel.Size = new System.Drawing.Size(90, 13);
             this.logPathLabel.TabIndex = 1;
@@ -60,7 +58,7 @@
             // enabledCheckbox
             // 
             this.enabledCheckbox.AutoSize = true;
-            this.enabledCheckbox.Location = new System.Drawing.Point(8, 8);
+            this.enabledCheckbox.Location = new System.Drawing.Point(10, 12);
             this.enabledCheckbox.Name = "enabledCheckbox";
             this.enabledCheckbox.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.enabledCheckbox.Size = new System.Drawing.Size(127, 17);
@@ -71,33 +69,15 @@
             // 
             // logPathTextbox
             // 
-            this.logPathTextbox.Location = new System.Drawing.Point(14, 52);
+            this.logPathTextbox.Location = new System.Drawing.Point(13, 309);
             this.logPathTextbox.Name = "logPathTextbox";
-            this.logPathTextbox.Size = new System.Drawing.Size(330, 20);
+            this.logPathTextbox.Size = new System.Drawing.Size(282, 20);
             this.logPathTextbox.TabIndex = 3;
             this.logPathTextbox.TextChanged += new System.EventHandler(this.logPathTextbox_TextChanged);
             // 
-            // configPathTextbox
-            // 
-            this.configPathTextbox.Location = new System.Drawing.Point(14, 97);
-            this.configPathTextbox.Name = "configPathTextbox";
-            this.configPathTextbox.Size = new System.Drawing.Size(330, 20);
-            this.configPathTextbox.TabIndex = 5;
-            this.configPathTextbox.TextChanged += new System.EventHandler(this.configPathTextbox_TextChanged);
-            // 
-            // configPathLabel
-            // 
-            this.configPathLabel.AutoSize = true;
-            this.configPathLabel.Location = new System.Drawing.Point(10, 80);
-            this.configPathLabel.Name = "configPathLabel";
-            this.configPathLabel.Size = new System.Drawing.Size(96, 13);
-            this.configPathLabel.TabIndex = 4;
-            this.configPathLabel.Text = "Config file location:";
-            this.configPathLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
             // generateSplitsButton
             // 
-            this.generateSplitsButton.Location = new System.Drawing.Point(164, 131);
+            this.generateSplitsButton.Location = new System.Drawing.Point(157, 248);
             this.generateSplitsButton.Name = "generateSplitsButton";
             this.generateSplitsButton.Size = new System.Drawing.Size(120, 23);
             this.generateSplitsButton.TabIndex = 6;
@@ -107,7 +87,7 @@
             // 
             // browseLogFileButton
             // 
-            this.browseLogFileButton.Location = new System.Drawing.Point(370, 52);
+            this.browseLogFileButton.Location = new System.Drawing.Point(304, 308);
             this.browseLogFileButton.Name = "browseLogFileButton";
             this.browseLogFileButton.Size = new System.Drawing.Size(80, 23);
             this.browseLogFileButton.TabIndex = 8;
@@ -115,46 +95,47 @@
             this.browseLogFileButton.UseVisualStyleBackColor = true;
             this.browseLogFileButton.Click += new System.EventHandler(this.browseLogFileButton_Click);
             // 
-            // browseConfigFileButton
-            // 
-            this.browseConfigFileButton.Location = new System.Drawing.Point(370, 97);
-            this.browseConfigFileButton.Name = "browseConfigFileButton";
-            this.browseConfigFileButton.Size = new System.Drawing.Size(80, 23);
-            this.browseConfigFileButton.TabIndex = 9;
-            this.browseConfigFileButton.Text = "Browse";
-            this.browseConfigFileButton.UseVisualStyleBackColor = true;
-            this.browseConfigFileButton.Click += new System.EventHandler(this.browseConfigFileButton_Click);
-            // 
             // openFileDialog
             // 
             this.openFileDialog.FileName = "openFileDialog";
             this.openFileDialog.Filter = "Text files|*.txt";
             // 
-            // reloadConfigButton
+            // checkedSplitEventList
             // 
-            this.reloadConfigButton.Location = new System.Drawing.Point(14, 131);
-            this.reloadConfigButton.Name = "reloadConfigButton";
-            this.reloadConfigButton.Size = new System.Drawing.Size(120, 23);
-            this.reloadConfigButton.TabIndex = 10;
-            this.reloadConfigButton.Text = "Reload Config";
-            this.reloadConfigButton.UseVisualStyleBackColor = true;
-            this.reloadConfigButton.Click += new System.EventHandler(this.reloadConfigButton_Click);
+            this.checkedSplitEventList.CheckOnClick = true;
+            this.checkedSplitEventList.FormattingEnabled = true;
+            this.checkedSplitEventList.Location = new System.Drawing.Point(10, 42);
+            this.checkedSplitEventList.Name = "checkedSplitEventList";
+            this.checkedSplitEventList.Size = new System.Drawing.Size(285, 199);
+            this.checkedSplitEventList.TabIndex = 11;
+            this.checkedSplitEventList.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.checkedSplitEventList_ItemCheck);
+            // 
+            // selectAllCheckbox
+            // 
+            this.selectAllCheckbox.AutoSize = true;
+            this.selectAllCheckbox.Location = new System.Drawing.Point(13, 252);
+            this.selectAllCheckbox.Name = "selectAllCheckbox";
+            this.selectAllCheckbox.Size = new System.Drawing.Size(117, 17);
+            this.selectAllCheckbox.TabIndex = 12;
+            this.selectAllCheckbox.Text = "Select/Deselect All";
+            this.selectAllCheckbox.ThreeState = true;
+            this.selectAllCheckbox.UseVisualStyleBackColor = true;
+            this.selectAllCheckbox.CheckedChanged += new System.EventHandler(this.selectAllCheckbox_CheckedChanged);
+            this.selectAllCheckbox.Click += new System.EventHandler(this.selectAllCheckbox_Click);
             // 
             // Settings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.reloadConfigButton);
-            this.Controls.Add(this.browseConfigFileButton);
+            this.Controls.Add(this.selectAllCheckbox);
+            this.Controls.Add(this.checkedSplitEventList);
             this.Controls.Add(this.browseLogFileButton);
             this.Controls.Add(this.generateSplitsButton);
-            this.Controls.Add(this.configPathTextbox);
-            this.Controls.Add(this.configPathLabel);
             this.Controls.Add(this.logPathTextbox);
             this.Controls.Add(this.enabledCheckbox);
             this.Controls.Add(this.logPathLabel);
             this.Name = "Settings";
-            this.Size = new System.Drawing.Size(474, 200);
+            this.Size = new System.Drawing.Size(412, 374);
             this.Load += new System.EventHandler(this.SettingsControl_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -166,12 +147,10 @@
         private System.Windows.Forms.Label logPathLabel;
         private System.Windows.Forms.CheckBox enabledCheckbox;
         private System.Windows.Forms.TextBox logPathTextbox;
-        private System.Windows.Forms.TextBox configPathTextbox;
-        private System.Windows.Forms.Label configPathLabel;
         private System.Windows.Forms.Button generateSplitsButton;
         private System.Windows.Forms.Button browseLogFileButton;
-        private System.Windows.Forms.Button browseConfigFileButton;
         private System.Windows.Forms.OpenFileDialog openFileDialog;
-        private System.Windows.Forms.Button reloadConfigButton;
+        private System.Windows.Forms.CheckedListBox checkedSplitEventList;
+        private System.Windows.Forms.CheckBox selectAllCheckbox;
     }
 }

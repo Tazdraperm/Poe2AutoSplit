@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using System.Windows.Forms;
 
 namespace Poe2AutoSplit.Component.AutoSplitter.Event
 {
     public class SplitEvent
     {
+        public static IEnumerable<SplitEvent> AllEvents => Events;
+
         private static readonly HashSet<SplitEvent> Events = new HashSet<SplitEvent>();
         private static readonly Dictionary<string, SplitEvent> EventByName = new Dictionary<string, SplitEvent>();
         private static readonly Dictionary<string, AreaEvent> AreaEventById = new Dictionary<string, AreaEvent>();
@@ -21,18 +22,6 @@ namespace Poe2AutoSplit.Component.AutoSplitter.Event
 
         static SplitEvent()
         {
-            AddBossEvent("Lachlann", "Lachlann of Endless Lament: Together... at last...");
-            AddBossEvent("Count Geonor", "The Hooded One: Allow me to clear your mind, if only for a moment.");
-            var kingInTheMists = AddBossEvent("King in the Mists", 
-                new List<string>
-                {
-                    "The King in the Mists: Why do you hate us for wanting to exist?",
-                    "The King in the Mists: So long as you know me, I will always exist...",
-                    "The King in the Mists: This is not the end..."
-                });
-            AddBossEvent("Doryani", "Doryani: Gah! No! Do not fail me... Not now!");
-            AddBossEvent("Jamanra", "Jamanra, the Abomination: You have accomplished... Nothing. Oriana will prevail... And the Faridun will rule the Vastiri.");
-
             AddAreaEvent("G1_town", "Clearfell Encampment");
             AddAreaEvent("G1_2", "Clearfell");
             AddAreaEvent("G1_3", "Mud Burrow");
@@ -42,12 +31,21 @@ namespace Poe2AutoSplit.Component.AutoSplitter.Event
             AddAreaEvent("G1_7", "Cemetery of the Eternals");
             AddAreaEvent("G1_8", "Mausoleum of the Praetor");
             AddAreaEvent("G1_9", "Tomb of the Consort");
+            AddBossEvent("Lachlann", "Lachlann of Endless Lament: Together... at last...");
             AddAreaEvent("G1_11", "Hunting Grounds");
             AddAreaEvent("G1_12", "Freythorn");
             AddAreaEvent("G1_13_1", "Ogham Farmlands");
+            var kingInTheMists = AddBossEvent("King in the Mists",
+                new List<string> 
+                {
+                    "The King in the Mists: Why do you hate us for wanting to exist?",
+                    "The King in the Mists: So long as you know me, I will always exist...",
+                    "The King in the Mists: This is not the end..."
+                });
             AddAreaEvent("G1_13_2", "Ogham Village", kingInTheMists);
             AddAreaEvent("G1_14", "Manor Ramparts");
             AddAreaEvent("G1_15", "Ogham Manor");
+            AddBossEvent("Count Geonor", "The Hooded One: Allow me to clear your mind, if only for a moment.");
 
             AddAreaEvent("G2_1", "Vastiri Outskirts");
             AddAreaEvent("G2_town", "Arduna Caravan");
@@ -67,6 +65,7 @@ namespace Poe2AutoSplit.Component.AutoSplitter.Event
             AddAreaEvent("G2_9_2", "Spires of Deshar");
             AddAreaEvent("G2_12_1", "Dreadnought");
             AddAreaEvent("G2_12_2", "Dreadnought Vanguard");
+            AddBossEvent("Jamanra", "Jamanra, the Abomination: You have accomplished... Nothing. Oriana will prevail... And the Faridun will rule the Vastiri.");
 
             AddAreaEvent("G3_1", "Sandswept Marsh");
             AddAreaEvent("G3_town", "Ziggurat Encampment");
@@ -85,6 +84,7 @@ namespace Poe2AutoSplit.Component.AutoSplitter.Event
             AddAreaEvent("G3_14", "Utzaal");
             AddAreaEvent("G3_16", "Aggorat");
             AddAreaEvent("G3_17", "Black Chambers");
+            AddBossEvent("Doryani", "Doryani: Gah! No! Do not fail me... Not now!");
         }
 
         private static AreaEvent AddAreaEvent(string id, string name, params SplitEvent[] requiredEvents)
@@ -201,6 +201,11 @@ namespace Poe2AutoSplit.Component.AutoSplitter.Event
         public void Reset()
         {
             _didSplit = false;
+        }
+
+        public override string ToString()
+        {
+            return Name;
         }
 
         public override bool Equals(object obj)

@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Security.Policy;
 using System.Windows.Forms;
 using System.Xml;
 using LiveSplit.Model;
 using LiveSplit.Options;
 using LiveSplit.UI;
-using Poe2AutoSplit.Component.AutoSplitter;
 using Poe2AutoSplit.Component.AutoSplitter.Event;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox;
 
 namespace Poe2AutoSplit.Component.UI
 {
@@ -26,28 +27,17 @@ namespace Poe2AutoSplit.Component.UI
         }
         private string _logPath;
 
-        public string ConfigPath
-        {
-            get => _configPath;
-            set
-            {
-                _configPath = value;
-                LoadConfig();
-            }
-        }
-        private string _configPath;
-
         public Action OnLogPathChanged { get; set; }
 
         private readonly LiveSplitState _state;
 
         private const string DefaultLogPath = @"C:\Program Files (x86)\Grinding Gear Games\Path of Exile 2\logs\Client.txt";
-
         private const string EnabledKey = "Enabled";
         private const string LogPathKey = "LogPath";
-        private const string ConfigPathKey = "ConfigPath";
+        private const string SplitEventsKey = "SplitEvent";
+        private const string EventKey = "Event";
 
-        private readonly List<string> _splitNames = new List<string>();
+        private bool _selectAllInProcess;
 
         public Settings(LiveSplitState state)
         {
@@ -59,13 +49,23 @@ namespace Poe2AutoSplit.Component.UI
 
         public XmlNode GetSettings(XmlDocument document)
         {
-            var settingsNode = document.CreateElement("Settings");
+            var settingsParent = document.CreateElement("Settings");
 
-            SettingsHelper.CreateSetting(document, settingsNode, EnabledKey, IsEnabled);
-            SettingsHelper.CreateSetting(document, settingsNode, LogPathKey, LogPath);
-            SettingsHelper.CreateSetting(document, settingsNode, ConfigPathKey, ConfigPath);
+            SettingsHelper.CreateSetting(document, settingsParent, EnabledKey, IsEnabled);
+            SettingsHelper.CreateSetting(document, settingsParent, LogPathKey, LogPath);
 
-            return settingsNode;
+            var splitEventsElement = SettingsHelper.ToElement(document, SplitEventsKey, (string)null);
+            foreach (var splitEvent in SplitEvent.AllEvents)
+            {
+                if (splitEvent.IsEnabled)
+                {
+                    SettingsHelper.CreateSetting(document, splitEventsElement, EventKey, splitEvent.ToString());
+                }
+            }
+
+            settingsParent.AppendChild(splitEventsElement);
+
+            return settingsParent;
         }
 
         public void SetSettings(XmlNode settings)
@@ -85,9 +85,17 @@ namespace Poe2AutoSplit.Component.UI
                     LogPath = element[LogPathKey].InnerText;
                 }
 
-                if (element[ConfigPathKey] != null)
+                if (element[SplitEventsKey] != null)
                 {
-                    ConfigPath = element[ConfigPathKey].InnerText;
+                    var splitEventsElement = element[SplitEventsKey];
+                    foreach (XmlNode child in splitEventsElement.GetElementsByTagName(EventKey))
+                    {
+                        var name = child.InnerText;
+                        if (SplitEvent.TryGetByName(name, out var splitEvent))
+                        {
+                            splitEvent.IsEnabled = true;
+                        }
+                    }
                 }
 
             }
@@ -103,33 +111,17 @@ namespace Poe2AutoSplit.Component.UI
             LogPath = DefaultLogPath;
         }
 
-        private void LoadConfig()
-        {
-            if (!File.Exists(ConfigPath))
-                return;
-
-            SplitEvent.DisableAll();
-            _splitNames.Clear();
-
-            var lines = File.ReadAllLines(ConfigPath);
-            foreach (var line in lines)
-            {
-                if (SplitEvent.TryGetByName(line, out var splitEvent))
-                {
-                    splitEvent.IsEnabled = true;
-                    _splitNames.Add(splitEvent.Name);
-                    Log.Info($"Add split event: {splitEvent.Name}");
-                }
-            }
-        }
-
         private void SettingsControl_Load(object sender, EventArgs e)
         {
             enabledCheckbox.Checked = IsEnabled;
             logPathTextbox.Text = LogPath;
-            configPathTextbox.Text = ConfigPath;
 
-            LoadConfig();
+            foreach (var splitEvent in SplitEvent.AllEvents)
+            {
+                checkedSplitEventList.Items.Add(splitEvent, splitEvent.IsEnabled);
+            }
+
+            UpdateSelectAllCheckboxState();
         }
 
         private void enabledCheckbox_CheckedChanged(object sender, EventArgs e)
@@ -142,12 +134,6 @@ namespace Poe2AutoSplit.Component.UI
             LogPath = logPathTextbox.Text;
         }
 
-        private void configPathTextbox_TextChanged(object sender, EventArgs e)
-        {
-            ConfigPath = configPathTextbox.Text;
-            LoadConfig();
-        }
-
         private void browseLogFileButton_Click(object sender, EventArgs e)
         {
             var result = openFileDialog.ShowDialog();
@@ -155,20 +141,6 @@ namespace Poe2AutoSplit.Component.UI
             {
                 logPathTextbox.Text = openFileDialog.FileName;
             }
-        }
-
-        private void browseConfigFileButton_Click(object sender, EventArgs e)
-        {
-            var result = openFileDialog.ShowDialog();
-            if (result == DialogResult.OK)
-            {
-                configPathTextbox.Text = openFileDialog.FileName;
-            }
-        }
-
-        private void reloadConfigButton_Click(object sender, EventArgs e)
-        {
-            LoadConfig();
         }
 
         private void generateSplitsButton_Click(object sender, EventArgs e)
@@ -186,12 +158,14 @@ namespace Poe2AutoSplit.Component.UI
                 return;
             }
 
-            LoadConfig();
-
             _state.Run.Clear();
-            foreach (var name in _splitNames)
+
+            foreach (var splitEvent in SplitEvent.AllEvents)
             {
-                _state.Run.AddSegment(name);
+                if (splitEvent.IsEnabled)
+                {
+                    _state.Run.AddSegment(splitEvent.Name);
+                }
             }
 
             if (_state.Run.Count == 0)
@@ -204,6 +178,59 @@ namespace Poe2AutoSplit.Component.UI
 
             MessageBox.Show("Splits generated successfully.",
                 "Generate Splits", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private void checkedSplitEventList_ItemCheck(object sender, ItemCheckEventArgs e)
+        {
+            if (checkedSplitEventList.Items[e.Index] is SplitEvent selectedSplitEvent)
+            {
+                selectedSplitEvent.IsEnabled = e.NewValue == CheckState.Checked;
+            }
+
+            if (_selectAllInProcess)
+                return;
+
+            var change = e.NewValue == CheckState.Checked ? 1 : -1;
+            UpdateSelectAllCheckboxState(change);
+        }
+
+        private void UpdateSelectAllCheckboxState(int change = 0)
+        {
+            if (checkedSplitEventList.CheckedItems.Count + change == checkedSplitEventList.Items.Count)
+            {
+                selectAllCheckbox.CheckState = CheckState.Checked;
+            }
+            else if (checkedSplitEventList.CheckedItems.Count + change == 0)
+            {
+                selectAllCheckbox.CheckState = CheckState.Unchecked;
+            }
+            else
+            {
+                selectAllCheckbox.CheckState = CheckState.Indeterminate;
+            }
+        }
+
+        private void selectAllCheckbox_CheckedChanged(object sender, EventArgs e)
+        {
+            _selectAllInProcess = true;
+
+            if (selectAllCheckbox.CheckState != CheckState.Indeterminate)
+            {
+                for (var i = 0; i < checkedSplitEventList.Items.Count; i++)
+                {
+                    checkedSplitEventList.SetItemChecked(i, selectAllCheckbox.CheckState == CheckState.Checked);
+                }
+            }
+
+            _selectAllInProcess = false;
+        }
+
+        private void selectAllCheckbox_Click(object sender, EventArgs e)
+        {
+            if (selectAllCheckbox.CheckState == CheckState.Indeterminate)
+            {
+                selectAllCheckbox.CheckState = CheckState.Unchecked;
+            }
         }
     }
 }
