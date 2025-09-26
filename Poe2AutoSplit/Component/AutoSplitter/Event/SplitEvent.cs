@@ -85,6 +85,31 @@ namespace Poe2AutoSplit.Component.AutoSplitter.Event
             AddAreaEvent("G3_16", "Aggorat");
             AddAreaEvent("G3_17", "Black Chambers");
             AddBossEvent("Doryani", "Doryani: Gah! No! Do not fail me... Not now!");
+
+            AddAreaEvent("G4_town", "Kingsmarch");
+            AddAreaEvent("G4_1_1", "Isle of Kin");
+            AddAreaEvent("G4_1_2", "Volcanic Warrens");
+            AddAreaEvent("G4_2_1", "Kedge Bay");
+            AddAreaEvent("G4_2_2", "Journey's End");
+            AddBossEvent("Captain Hartlin", "Captain Hartlin: Do not... believe his lies...");
+            AddAreaEvent("G4_3_1", "Whakapanu Island");
+            AddAreaEvent("G4_3_2", "Singing Caverns");
+            AddBossEvent("Diamora", "Diamora, the Song of Death: We could have been... so much more.");
+            AddAreaEvent("G4_4_1", "Eye of Hinekora");
+            AddAreaEvent("G4_4_2", "Halls of the Dead");
+            AddBossEvent("Yama the White", "Yama The White: Ahhh! Okay, okay. Yama sees you. You are worthy.");
+            AddAreaEvent("G4_4_3", "Trial of the Ancestors");
+            AddAreaEvent("G4_5_1", "Abandoned Prison");
+            AddAreaEvent("G4_5_2", "Solitary Confinement");
+            AddBossEvent("The Prisoner", "The Prisoner: You cannot wound23 me... I cannot die...");
+            AddAreaEvent("G4_7", "Shrike Island");
+            AddBossEvent("Arastas", "Missionary Lorandis: What!? No! Stay back! Saviour... help me!");
+            AddBossEvent("Torvian", "Cnaeus, of the Order: The Saviour...");
+            AddAreaEvent("G4_10", "The Excavation");
+            AddBossEvent("Benedictus", "Benedictus, First Herald of Utopia: My lady... you must take your leave! I will bury these fools... I will bury it all! For the Saviourrr! ");
+            AddAreaEvent("G4_11_1b", "Ngakanu");
+            AddAreaEvent("G4_11_2", "Heart of the Tribe");
+            AddBossEvent("Tavakai", "Tavakai: What... what have I done?");
         }
 
         private static AreaEvent AddAreaEvent(string id, string name, params SplitEvent[] requiredEvents)
