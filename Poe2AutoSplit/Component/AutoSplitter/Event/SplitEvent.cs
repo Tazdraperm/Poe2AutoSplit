@@ -110,6 +110,41 @@ namespace Poe2AutoSplit.Component.AutoSplitter.Event
             AddAreaEvent("G4_11_1b", "Ngakanu");
             AddAreaEvent("G4_11_2", "Heart of the Tribe");
             AddBossEvent("Tavakai", "Tavakai: What... what have I done?");
+
+            AddAreaEvent("P1_Town", "The Refuge");
+            AddAreaEvent("P1_1", "Scorched Farmlands");
+            AddAreaEvent("P1_2", "Stones of Serle");
+            AddBossEvent("Siora, Blade of the Mists", "Una: The fey spirits! What are they doing?");
+            AddAreaEvent("P1_3", "The Blackwood");
+            AddAreaEvent("P1_4", "Holten");
+            AddAreaEvent("P1_5", "Wolvenhold");
+            AddBossEvent("Oswin, The Dread Warden", "Oswin, The Dread Warden: Your kin will rot here too...");
+            AddAreaEvent("P1_6", "Holten Estate");
+            // P1 End Bosses not trackable through client.txt :(
+
+            AddAreaEvent("P2_Town", "The Khari Bazaar");
+            AddAreaEvent("P2_1", "The Khari Crossing");
+            //5%LifePermanent AddBossEvent("5% increased maximum Life", "has received 5% increased maximum Life");
+            AddAreaEvent("P2_2", "Pools of Khatal");
+            AddAreaEvent("P2_3", "Sel Khari Sanctuary");
+            AddBossEvent("Elzarah, the Cobra Lord", "Jado: Be gone now, foul serpent!");
+
+            AddAreaEvent("P2_5", "The Galai Gates");
+            // Gate Boss not trackable through client.txt
+            AddAreaEvent("P2_6", "Qimah");
+            AddAreaEvent("P2_7", "Qimah Reservoir");
+            // Azmadi, the Faridun Prince not trackable, has different Voice Ending on 2nd Test 
+            
+            AddAreaEvent("P3_Town", "The Glade");
+            AddAreaEvent("P3_1", "Ashen Forest");
+            AddAreaEvent("P3_2", "Kriar Village");
+            AddAreaEvent("P3_3", "Glacial Tarn");
+            AddAreaEvent("P3_4", "Howling Caves");
+            AddAreaEvent("P3_5", "Kriar Peaks");
+            AddAreaEvent("P3_6", "Etched Ravine");
+            AddAreaEvent("P3_7", "The Cuachic Vault");
+            //Tested Zolin&Zelina with each Boss killed first.. Zolin always said submit phrase
+            AddBossEvent("Zolin&Zelina", "Zolin, Blood Priest: Enough, we submit!");
         }
 
         private static AreaEvent AddAreaEvent(string id, string name, params SplitEvent[] requiredEvents)
